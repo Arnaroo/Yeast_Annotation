@@ -1,0 +1,2 @@
+total_primary	mapq0_reads	mapq0_rate	method
+3259262	163102	.0500	minimap2_mapq0_proxy

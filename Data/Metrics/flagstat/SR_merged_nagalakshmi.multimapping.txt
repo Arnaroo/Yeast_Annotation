@@ -1,0 +1,2 @@
+total_primary	multi_mapped	multi_rate
+28594996	3048601	.1066

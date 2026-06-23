@@ -1,0 +1,6 @@
+reference	total_input_reads	primary_mapped	mapping_rate_pct
+SR_merged_genome	34270624	33906325	98.9300
+SR_merged_orf_only	34270624	22216695	64.8200
+SR_merged_orf_1000	34270624	31404870	91.6300
+SR_merged_our_ref	34270624	29992595	87.5100
+SR_merged_nagalakshmi	34270624	28594996	83.4300

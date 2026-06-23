@@ -1,0 +1,2 @@
+n_alignments	read_count
+1	33906325

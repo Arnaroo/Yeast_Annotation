@@ -1,0 +1,2 @@
+primary_mapped	antisense	antisense_rate
+3259262	1635833	.5019

@@ -1,0 +1,2 @@
+primary_mapped	secondary_alignments	secondary_per_primary
+3196436	1267860	.3966

@@ -1,0 +1,2 @@
+total_primary	mapq0_reads	mapq0_rate	method
+33906325	3284279	.0968	bwa_mapq0_proxy
