@@ -19,7 +19,8 @@ The resource provides per-gene 5′ and 3′ UTR lengths for *S. cerevisiae* der
   - [Step 4 — Build transcript FASTA reference (Python)](#step-4--build-transcript-fasta-reference-python)
   - [Preprocessing — alignment and metrics (HPC shell scripts)](#preprocessing--alignment-and-metrics-hpc-shell-scripts)
   - [Figures](#figures)
-  - [Comparisons — validation against independent annotations](#comparisons--validation-against-independent-annotations)
+  - [Comparisons — validation against independent annotations and references](#comparisons--validation-against-independent-annotations-and-references)
+- [Sensitivity — segmentation threshold sweep](#sensitivity--segmentation-threshold-sweep)
 - [Dependencies](#dependencies)
 - [Quick start](#quick-start)
 - [Citation](#citation)
@@ -33,13 +34,17 @@ The resource provides per-gene 5′ and 3′ UTR lengths for *S. cerevisiae* der
 .
 ├── Data/
 │   ├── Annotation/          # Final annotation tables and FASTA references
-│   ├── Bam/                 # Example BAM files (DRS and short-read)
-│   └── Metrics/             # Pre-computed alignment quality metrics
-│       ├── aln_per_read/
-│       ├── antisense/
-│       ├── flagstat/
-│       ├── profiles/        # Metagene coverage profiles (TSV)
-│       └── softclip/
+│   ├── Metrics/             # Pre-computed alignment quality metrics
+│   │   ├── aln_per_read/
+│   │   ├── antisense/
+│   │   ├── flagstat/
+│   │   ├── profiles/        # Metagene coverage profiles (TSV)
+│   │   ├── softclip/
+│   │   └── archive_pre_real_rerun/   # metrics as they stood before the real-rerun
+│   ├── UNAGI/               # unagi_compare.py outputs
+│   ├── Overlap/             # neighbour_overlap.py outputs
+│   ├── Abundance/           # abundance_concordance.py / read_migration_analyse.py outputs
+│   └── Sensitivity/         # sensitivity_sweep.R / sensitivity_analyse.py outputs
 ├── FinalReference/          # Ready-to-use FASTA references
 ├── scripts/
 │   ├── ReferenceConstruction/   # Steps 1–4: build the annotation
@@ -62,11 +67,22 @@ The resource provides per-gene 5′ and 3′ UTR lengths for *S. cerevisiae* der
 │   │   ├── plot_suppl_fig2.py
 │   │   ├── plot_suppl_fig3.R
 │   │   └── plot_suppl_fig4.py
-│   └── Comparisons/             # Validation against external, independent annotations
-│       ├── derive_pelechano_utr.py
-│       └── plot_final_vs_tifseq_comparison.R
+│   ├── Comparisons/             # Validation against independent annotations and references
+│   │   ├── derive_pelechano_utr.py
+│   │   ├── plot_final_vs_tifseq_comparison.R
+│   │   ├── unagi_compare.py
+│   │   ├── neighbour_overlap.py
+│   │   ├── abundance_concordance.py
+│   │   ├── read_migration.sh
+│   │   └── read_migration_analyse.py
+│   └── Sensitivity/              # Segmentation threshold sweep
+│       ├── segmentation_corrected.R
+│       ├── sensitivity_sweep.R
+│       └── sensitivity_analyse.py
 └── README.md
 ```
+
+Note: `Data/Bam/` (example BAM files) was removed from the repository and from its history — the files were large enough to make cloning impractical and are better hosted alongside the other large data on Zenodo. `.gitignore` keeps it from being re-added by accident.
 
 ---
 
@@ -89,16 +105,6 @@ The resource provides per-gene 5′ and 3′ UTR lengths for *S. cerevisiae* der
 | `Nagalakshmi_w.fa` | Transcript FASTA built from `Nagalakshmi_UTR.csv` (for comparison). |
 | `TARGET_final_reference_w.fa` | Concatenated multi-reference FASTA used for competitive alignment benchmarking. |
 | `Pelechano_UTR.csv` | Per-gene 5′/3′ UTR lengths derived from the Pelechano, Wei & Steinmetz (2013) TIF-seq major-isoform table, via `scripts/Comparisons/derive_pelechano_utr.py`. Used as an independent, orthogonal benchmark that took no part in building the annotation. Columns: `Gene`, `five_prime_utr`, `three_prime_utr`. |
-
-### BAM files (`Data/Bam/`)
-
-Representative sorted, indexed BAM files illustrating alignments to the final reference:
-
-| File | Description |
-|---|---|
-| `DRS_our_ref.bam` | DRS reads (minimap2, map-ont) aligned to `Final_w.fa`. |
-| `SR_merged_our_ref.bam` | Short-read data (STAR) aligned to `Final_w.fa`. |
-| `NS_PS_Rep3_filtered.sorted.bam` | Filtered DRS reads for the NS_PS replicate 3 condition (used in annotation construction). |
 
 ### Metrics (`Data/Metrics/`)
 
@@ -203,9 +209,11 @@ Figure plotting scripts are in `scripts/Figures/`. They read the pre-computed me
 
 ---
 
-### Comparisons — validation against independent annotations
+### Comparisons — validation against independent annotations and references
 
-Scripts in `scripts/Comparisons/` benchmark the final annotation against TIF-seq (Pelechano *et al.*, 2013), a transcript-boundary method that took no part in building this reference.
+Scripts in `scripts/Comparisons/` benchmark the final annotation against data and annotations that took no part in building it.
+
+**TIF-seq (Pelechano *et al.*, 2013)**
 
 | Script | Description |
 |---|---|
@@ -220,7 +228,69 @@ Rscript scripts/Comparisons/plot_final_vs_tifseq_comparison.R \
     --threshold 20
 ```
 
-Note: the manuscript also reports a segmentation-parameter sensitivity sweep, a gene-level comparison against the UNAGI annotation (Al Kadi *et al.*, 2020), and an abundance/read-migration benchmark against the prior reference. The scripts for these are not yet part of this repository; get in touch with the corresponding authors if you need them ahead of that.
+**UNAGI (Al Kadi *et al.*, 2020)** — an independent nanopore full-length cDNA annotation: different library chemistry, basecaller, assembler and laboratory.
+
+| Script | Description |
+|---|---|
+| `unagi_compare.py` | Gene-level comparison against UNAGI's two supplementary tables, matched to the backbone by ORF coordinate (not by accession map). Reports coverage, over-/under-extension rates at three tolerances, whether the merge rule improved or only moved agreement, a provenance breakdown, UNAGI's own definition and dispersion, and UNAGI vs. TIF-seq as two independent benchmarks measured against each other. |
+
+The two source files (MOESM5, MOESM6) are the publisher-hosted supplementary tables of the UNAGI paper and are not redistributed here; the module docstring gives the two-line `curl` command to fetch them.
+
+```bash
+python3 scripts/Comparisons/unagi_compare.py \
+    --annotation-dir Data/Annotation \
+    --unagi-dir      Data/UNAGI \
+    --outdir         Data/UNAGI
+```
+
+**Newly overlapping neighbours** — extending UTR boundaries in a compact genome creates new overlaps between neighbouring genes, which matters for read assignment when the overlap reaches into a neighbour's coding sequence.
+
+| Script | Description |
+|---|---|
+| `neighbour_overlap.py` | Compares `Final_UTRs.gff3` against `Nagalakshmi_UTRs.gff3` directly (the two GFF3s gffread built each transcriptome FASTA from) to find gene pairs that overlap under the released annotation but did not under the prior one, and flags the subset reaching into a neighbour's ORF body on the same strand — the "worst tier" `abundance_concordance.py` tests for a measurable effect. Does not classify genes by SGD ORF status or check overlap against non-mRNA features (tRNA, snoRNA, etc.); that is a separate analysis with its own external SGD annotation input. |
+
+```bash
+python3 scripts/Comparisons/neighbour_overlap.py \
+    --annotation-dir Data/Annotation --outdir Data/Overlap
+```
+
+**Abundance and read migration** — does changing the reference move per-gene abundance estimates, and does it move reads across newly overlapping gene pairs specifically?
+
+| Script | Description |
+|---|---|
+| `abundance_concordance.py` | Best-hit read counts for two technologies (direct RNA, short read) under both references, compared as CPM and TPM: Spearman/Pearson correlation, fraction within 1.2-fold, fraction moving 2-fold or more, and whether the newly-overlapping "worst tier" genes (from `neighbour_overlap.py`) move more than the rest (Cliff's delta). |
+| `read_migration.sh` | Aligns the same reads to both references in one run, records each read's best-hit transcript under each, and joins the two into a transition table (`old_transcript`, `new_transcript`, `n_reads`). |
+| `read_migration_analyse.py` | Classifies every transition (unchanged / gained / lost / migrated) and splits migrated reads into those attributable to a newly overlapping pair versus everything else, separating out the RDN37 rDNA repeat, a known multi-mapping sink independent of this annotation. |
+
+```bash
+scripts/Comparisons/read_migration.sh \
+    Data/Annotation/Final_w.fa Data/Annotation/Nagalakshmi_w.fa \
+    drs.fq.gz sr.fq.gz work/migration
+
+python3 scripts/Comparisons/read_migration_analyse.py \
+    --transitions-dir work/migration --overlap-dir Data/Overlap --outdir Data/Abundance
+```
+
+`abundance_concordance.py` needs each technology's best-hit counts and a transcript-length table per reference; see its module docstring for the `minimap2`/`samtools`/`seqkit` one-liners.
+
+---
+
+## Sensitivity — segmentation threshold sweep
+
+Scripts in `scripts/Sensitivity/` answer why the four segmentation thresholds (coverage floor, breakpoint-merge window, breakpoint effect size, expressed-segment floor) take the values they do, by re-running boundary calling across a 5-value-per-threshold grid (625 combinations) on the six real construction conditions.
+
+| Script | Description |
+|---|---|
+| `segmentation_corrected.R` | The boundary-calling algorithm (`select_segments`, `detect_expressed_region_corrected`, `compute_utrs`) factored out of `ReferenceConstruction/02_transcripts_segmentation.R` so it can be re-run with non-released threshold values. Sourced by `sensitivity_sweep.R`, not reimplemented elsewhere. |
+| `sensitivity_sweep.R` | Runs the 625-combination grid on each of the six conditions, reusing one Segmentor3IsBack change-point pass per gene per condition across the whole grid. The expensive step (~1 hour for all six conditions). |
+| `sensitivity_analyse.py` | Compares every combination's six-condition-max call against the released combination: a whole-grid summary (how far the worst-case joint move across all four thresholds can shift the calls) and a per-parameter one-step breakdown (which threshold drives the movement, and how much of the gene population). |
+
+```bash
+Rscript scripts/Sensitivity/sensitivity_sweep.R
+python3 scripts/Sensitivity/sensitivity_analyse.py
+```
+
+`sensitivity_sweep.R` reads the six `{condition}_combined.tsv` files `ReferenceConstruction/01_aggregate_data.R` produces.
 
 ---
 

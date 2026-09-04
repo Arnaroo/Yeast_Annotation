@@ -1,0 +1,21 @@
+technology	measure	n_reads	pct_of_reads
+direct RNA	both_unmapped	200316	5.8516
+direct RNA	unchanged	2923314	85.3957
+direct RNA	gained	26506	0.7743
+direct RNA	lost	47	0.0014
+direct RNA	migrated	273075	7.977
+direct RNA	migrated_attributable	11424	0.3337
+direct RNA	migrated_attributable_into_orf	2289	0.0669
+direct RNA	migrated_other	261651	7.6433
+direct RNA	migrated_attributable_rdna_repeat	9583	0.2799
+direct RNA	migrated_attributable_elsewhere	1841	0.0538
+short read	both_unmapped	273366	0.9114
+short read	unchanged	26952353	89.8634
+short read	gained	912645	3.0429
+short read	lost	0	0.0
+short read	migrated	1854231	6.1823
+short read	migrated_attributable	179868	0.5997
+short read	migrated_attributable_into_orf	142027	0.4735
+short read	migrated_other	1674363	5.5826
+short read	migrated_attributable_rdna_repeat	134354	0.448
+short read	migrated_attributable_elsewhere	45514	0.1518

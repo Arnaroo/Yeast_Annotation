@@ -1,0 +1,5 @@
+end	comparison	n	spearman_rho	median_diff	median_abs_diff	concordant_n_T20	concordant_pct_T20	concordant_n_T50	concordant_pct_T50	concordant_n_T100	concordant_pct_T100	tifseq_concordant_n_T20	unagi_concordant_n_T20	both_concordant_n_T20	tifseq_concordant_pct_T20	unagi_concordant_pct_T20	both_concordant_pct_T20
+5prime	unagi vs tifseq	5160	0.5789	16.5	21.0	2475.0	47.97	3681.0	71.34	4181.0	81.03						
+3prime	unagi vs tifseq	5314	0.6456	7.0	14.0	3016.0	56.76	3939.0	74.12	4459.0	83.91						
+5prime	ours, on genes in both benchmarks	5049					40.21		60.51		70.43	2121.0	2030.0	1362.0	42.01	40.21	26.98
+3prime	ours, on genes in both benchmarks	5187					43.15		59.44		73.45	2356.0	2238.0	1656.0	45.42	43.15	31.93

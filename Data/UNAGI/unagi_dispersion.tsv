@@ -1,0 +1,3 @@
+end	n_with_alt_sites	boundary_equals_max_n	boundary_equals_max_pct	sites_beyond_boundary_n	median_n_alt_sites	median_spread_nt	q25_spread_nt	q75_spread_nt	own_spread_ge_T20_pct	own_spread_ge_T50_pct	own_spread_ge_T100_pct
+5prime	1059	1055	99.62	4	3.0	23.0	10.0	41.0	54.58	19.45	6.04
+3prime	2300	2300	100.0	0	2.0	9.0	0.0	35.0	36.74	19.13	8.83

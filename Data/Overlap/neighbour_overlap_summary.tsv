@@ -1,0 +1,12 @@
+measure	value
+gene pairs overlapping, ORF bodies only	738.0
+gene pairs overlapping, prior reference	2820.0
+gene pairs overlapping, released reference	3425.0
+newly overlapping gene pairs	605.0
+newly overlapping, same strand	296.0
+newly overlapping reaching an ORF body	230.0
+newly overlapping, same strand into ORF body (worst tier)	102.0
+median new overlap length nt	102.0
+genes gaining at least one new overlap	1077.0
+genes gaining no new overlap	5690.0
+genes in released reference	6767.0
