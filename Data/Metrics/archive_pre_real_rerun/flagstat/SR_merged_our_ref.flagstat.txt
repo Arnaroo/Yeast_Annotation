@@ -1,11 +1,11 @@
-36646167 + 0 in total (QC-passed reads + QC-failed reads)
-29835578 + 0 primary
-6810589 + 0 secondary
+36605507 + 0 in total (QC-passed reads + QC-failed reads)
+29992595 + 0 primary
+6612912 + 0 secondary
 0 + 0 supplementary
 0 + 0 duplicates
 0 + 0 primary duplicates
-36646167 + 0 mapped (100.00% : N/A)
-29835578 + 0 primary mapped (100.00% : N/A)
+36605507 + 0 mapped (100.00% : N/A)
+29992595 + 0 primary mapped (100.00% : N/A)
 0 + 0 paired in sequencing
 0 + 0 read1
 0 + 0 read2

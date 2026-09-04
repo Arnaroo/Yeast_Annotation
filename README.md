@@ -19,6 +19,7 @@ The resource provides per-gene 5′ and 3′ UTR lengths for *S. cerevisiae* der
   - [Step 4 — Build transcript FASTA reference (Python)](#step-4--build-transcript-fasta-reference-python)
   - [Preprocessing — alignment and metrics (HPC shell scripts)](#preprocessing--alignment-and-metrics-hpc-shell-scripts)
   - [Figures](#figures)
+  - [Comparisons — validation against independent annotations](#comparisons--validation-against-independent-annotations)
 - [Dependencies](#dependencies)
 - [Quick start](#quick-start)
 - [Citation](#citation)
@@ -54,13 +55,16 @@ The resource provides per-gene 5′ and 3′ UTR lengths for *S. cerevisiae* der
 │   │   ├── 05_metrics.sh
 │   │   ├── compute_metagene.py
 │   │   └── softclip_metrics.py
-│   └── Figures/                 # Figure plotting scripts
-│       ├── plot_figure2.py
-│       ├── plot_figure3.py
-│       ├── plot_figure4.py
-│       ├── plot_suppl_fig2.py
-│       ├── plot_suppl_fig3.R
-│       └── plot_suppl_fig4.py
+│   ├── Figures/                 # Figure plotting scripts
+│   │   ├── plot_figure2.py
+│   │   ├── plot_figure3.py
+│   │   ├── plot_figure4.py
+│   │   ├── plot_suppl_fig2.py
+│   │   ├── plot_suppl_fig3.R
+│   │   └── plot_suppl_fig4.py
+│   └── Comparisons/             # Validation against external, independent annotations
+│       ├── derive_pelechano_utr.py
+│       └── plot_final_vs_tifseq_comparison.R
 └── README.md
 ```
 
@@ -84,6 +88,7 @@ The resource provides per-gene 5′ and 3′ UTR lengths for *S. cerevisiae* der
 | `Nagalakshmi_UTRs.gff3` | GFF3 with Nagalakshmi UTR coordinates for the alternative reference build. |
 | `Nagalakshmi_w.fa` | Transcript FASTA built from `Nagalakshmi_UTR.csv` (for comparison). |
 | `TARGET_final_reference_w.fa` | Concatenated multi-reference FASTA used for competitive alignment benchmarking. |
+| `Pelechano_UTR.csv` | Per-gene 5′/3′ UTR lengths derived from the Pelechano, Wei & Steinmetz (2013) TIF-seq major-isoform table, via `scripts/Comparisons/derive_pelechano_utr.py`. Used as an independent, orthogonal benchmark that took no part in building the annotation. Columns: `Gene`, `five_prime_utr`, `three_prime_utr`. |
 
 ### BAM files (`Data/Bam/`)
 
@@ -198,6 +203,27 @@ Figure plotting scripts are in `scripts/Figures/`. They read the pre-computed me
 
 ---
 
+### Comparisons — validation against independent annotations
+
+Scripts in `scripts/Comparisons/` benchmark the final annotation against TIF-seq (Pelechano *et al.*, 2013), a transcript-boundary method that took no part in building this reference.
+
+| Script | Description |
+|---|---|
+| `derive_pelechano_utr.py` | Derives `Data/Annotation/Pelechano_UTR.csv` from the raw TIF-seq isoform table (GEO GSE39128) and the gene-model backbone GFF3, selecting the major covering isoform per gene. |
+| `plot_final_vs_tifseq_comparison.R` | Compares `final_utr.tsv` against `Pelechano_UTR.csv` with signed differences in both directions (the final annotation can be longer *or* shorter than TIF-seq, unlike the Nagalakshmi comparison it was built from). Reports Spearman correlation and over-/under-extension rates at a configurable threshold. |
+
+```bash
+Rscript scripts/Comparisons/plot_final_vs_tifseq_comparison.R \
+    --final_utr Data/Annotation/final_utr.tsv \
+    --ref_utr   Data/Annotation/Pelechano_UTR.csv \
+    --outdir    Figures_out \
+    --threshold 20
+```
+
+Note: the manuscript also reports a segmentation-parameter sensitivity sweep, a gene-level comparison against the UNAGI annotation (Al Kadi *et al.*, 2020), and an abundance/read-migration benchmark against the prior reference. The scripts for these are not yet part of this repository; get in touch with the corresponding authors if you need them ahead of that.
+
+---
+
 ## Dependencies
 
 ### R (reference construction)
@@ -226,8 +252,8 @@ To reproduce the final transcript FASTA from the provided annotation files (no H
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/Arnaroo/yeast-utr-annotation.git
-cd yeast-utr-annotation
+git clone https://github.com/Arnaroo/Yeast_Annotation.git
+cd Yeast_Annotation
 
 # 2. Install Python dependencies
 pip install numpy pandas pysam matplotlib seaborn
