@@ -1,0 +1,7 @@
+annotation	end	n	spearman_rho	median_diff	q25_diff	q75_diff	mean_diff	frac_positive	wilcoxon_p
+final	5prime	5448	0.4768	25.0	0.0	114.0	103.66	0.7416	0.0
+final	3prime	5506	0.5091	17.0	-1.0	96.0	61.25	0.731	0.0
+nagalakshmi	5prime	4763	0.5411	14.0	-1.0	63.5	88.17	0.6477	0.0
+nagalakshmi	3prime	4817	0.5366	19.0	-1.0	101.0	72.79	0.6425	0.0
+drs	5prime	5027	0.5816	4.0	-11.0	40.0	34.58	0.5502	5.692497025769463e-81
+drs	3prime	5205	0.6908	1.0	-18.0	5.0	-22.5	0.5062	9.283142496646278e-36

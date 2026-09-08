@@ -83,6 +83,8 @@ def main():
             combo=k,
             retained=len(common) / len(rel_calls),
             identical=float(((d5 == 0) & (d3 == 0)).mean()),
+            ident_five=float((d5 == 0).mean()),
+            ident_three=float((d3 == 0).mean()),
             within10=float(((d5 <= 10) & (d3 <= 10)).mean()),
             n_genes=len(d),
             mean_five=d["five"].mean(),

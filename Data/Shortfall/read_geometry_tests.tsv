@@ -1,0 +1,15 @@
+test	statistic	against	estimate	p	n
+spearman	frac_reach5	tx_len	-0.16262837533928673	2.682882886804871e-35	5737
+spearman	frac_reach5	n_reads	0.024647057448538567	0.0619409095610601	5737
+spearman	frac_reach3	tx_len	0.15736929970854974	3.922272031633863e-33	5737
+spearman	frac_reach3	n_reads	-0.16667659869795673	5.147841748161163e-37	5737
+spearman	med_start5	tx_len	0.9159454520402532	0.0	5737
+spearman	med_end3	tx_len	-0.0896067167099743	1.0514171106610824e-11	5737
+spearman	q05_edge_5'	shortfall_nt_5	0.47769001627627217	8.618260424877114e-174	3052
+mannwhitney	q05_edge_5'	shortfall vs rest	0.24169267469379663	1.4141983210462576e-38	4442
+spearman	q05_edge_3'	shortfall_nt_3	0.6515938710466895	0.0	3503
+mannwhitney	q05_edge_3'	shortfall vs rest	0.5871119518087005	2.0589024684245542e-185	4466
+kruskal	5'_reach_by_verdict	DRS too short|both too long|both too short	223.55633582559238	2.853372545326411e-49	3034
+mannwhitney	5'_clip_both_too_short	rest of shortfall	0.0016308130494662176	0.47398824563059394	3034
+kruskal	3'_reach_by_verdict	DRS too short|both too long|both too short	829.9847411148844	5.903416637944098e-181	3503
+mannwhitney	3'_clip_both_too_short	rest of shortfall	0.21414912609464865	5.3049700701143175e-19	3503

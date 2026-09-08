@@ -41,11 +41,15 @@ The resource provides per-gene 5′ and 3′ UTR lengths for *S. cerevisiae* der
 │   │   ├── antisense/
 │   │   ├── flagstat/
 │   │   ├── profiles/        # Metagene coverage profiles (TSV)
+│   │   ├── profiles_scaled/ # compute_metagene_scaled.py / plot_suppl_fig9.py outputs
 │   │   ├── softclip/
 │   │   └── archive_pre_real_rerun/   # metrics as they stood before the real-rerun
 │   ├── UNAGI/               # unagi_compare.py outputs
 │   ├── Overlap/             # neighbour_overlap.py outputs
 │   ├── Abundance/           # abundance_concordance.py / read_migration_analyse.py outputs
+│   ├── TIFseq/              # tifseq_rates.py outputs
+│   ├── Shortfall/           # shortfall.py / read_geometry.py outputs
+│   ├── LocusTracks/         # locus_*.py/.R and Figure 1 / Supplementary Fig. S3 outputs
 │   └── Sensitivity/         # sensitivity_sweep.R / sensitivity_analyse.py outputs
 ├── FinalReference/          # Ready-to-use FASTA references
 ├── scripts/
@@ -66,12 +70,25 @@ The resource provides per-gene 5′ and 3′ UTR lengths for *S. cerevisiae* der
 │   │   ├── plot_figure2.py
 │   │   ├── plot_figure3.py
 │   │   ├── plot_figure4.py
-│   │   ├── plot_suppl_fig2.py
+│   │   ├── plot_figure1a_schematic.py
+│   │   ├── locus_windows.py
+│   │   ├── locus_coverage_real.py
+│   │   ├── locus_segmentation.R
+│   │   ├── plot_figure1b_and_suppl_fig3.py
+│   │   ├── compose_figure1.py
+│   │   ├── plot_suppl_fig2.py         # superseded, see the Figures table
 │   │   ├── plot_suppl_fig3.R
-│   │   └── plot_suppl_fig4.py
+│   │   ├── plot_suppl_fig4.py
+│   │   ├── compute_metagene_scaled.py
+│   │   └── plot_suppl_fig9.py
 │   ├── Comparisons/             # Validation against independent annotations and references
 │   │   ├── derive_pelechano_utr.py
 │   │   ├── plot_final_vs_tifseq_comparison.R
+│   │   ├── tifseq_rates.py
+│   │   ├── plot_suppl_fig6.R
+│   │   ├── shortfall.py
+│   │   ├── read_geometry.py
+│   │   ├── plot_suppl_fig7.R
 │   │   ├── unagi_compare.py
 │   │   ├── neighbour_overlap.py
 │   │   ├── abundance_concordance.py
@@ -80,7 +97,8 @@ The resource provides per-gene 5′ and 3′ UTR lengths for *S. cerevisiae* der
 │   └── Sensitivity/              # Segmentation threshold sweep
 │       ├── segmentation_corrected.R
 │       ├── sensitivity_sweep.R
-│       └── sensitivity_analyse.py
+│       ├── sensitivity_analyse.py
+│       └── sensitivity_curves.py
 └── README.md
 ```
 
@@ -209,11 +227,48 @@ Supplementary figure numbers below are the manuscript's current numbering; the f
 | `plot_figure2.py` | DRS UTR length distributions and comparison with Nagalakshmi *et al.* |
 | `plot_figure3.py` | Alignment quality metrics across five references × two data types. |
 | `plot_figure4.py` | Metagene coverage profiles anchored at the ORF start and end for all references (the axes and this table both say ORF start/end, not TSS/TES — see the note under `compute_metagene.py`). |
-| `plot_suppl_fig2.py` | **Supplementary Fig. S3.** Read pileups at eight loci chosen to be difficult (a close neighbour, an intron-containing gene), one BAM per locus with our / Nagalakshmi / pre-merge-DRS boundary tracks overlaid. |
 | `plot_suppl_fig3.R` | **Supplementary Fig. S5.** Four-panel genome-wide comparison of the pre-merge DRS calls against Nagalakshmi *et al.* |
 | `plot_suppl_fig4.py` | **Supplementary Fig. S8.** Read pileups for DRS and short-read BAMs together, one gene per panel group, validating boundaries against two independent datasets neither used in construction. |
+| `plot_suppl_fig2.py` | A read-pileup design for the eight-loci figure, superseded by `plot_figure1b_and_suppl_fig3.py` below once Reviewer 1 asked for genomic coordinates and a CDS track instead; kept for reference, not the current source of any released figure. |
 
-Figure 1 and Supplementary Figs. S1, S4, S6, S7 and S9 have no plotting script in this repository yet — they exist only in the authors' internal analysis directory. Get in touch with the corresponding authors if you need them.
+**Figure 1 and Supplementary Fig. S3** — the segmentation worked example, redrawn on genomic coordinates with a CDS track and the Nagalakshmi annotation overlaid (Reviewer 1's specific request). Figure 1B follows one locus (YBL091C) through four steps; Supplementary Fig. S3 repeats the coverage + annotation pair for eight further loci chosen to be difficult, not representative.
+
+| Script | Description |
+|---|---|
+| `locus_windows.py` | Defines each window (ORF span ± 1000 nt) and pulls every CDS/UTR/intron feature from both GFF3s that overlaps it, from `Final_UTRs.gff3` and `Nagalakshmi_UTRs.gff3`. |
+| `locus_coverage_real.py` | Real per-position coverage for each window, summed over the four fraction-level conditions; the antisense track is a neighbouring gene's own sense signal, reconstructed from its own coverage table and mapped into this window's coordinates. |
+| `locus_segmentation.R` | Segments each window's coverage with `segmentation_corrected.R` (see Sensitivity below), on the gene's own transcript-direction ordering rather than genomic order — the two run in opposite directions for a minus-strand gene. |
+| `plot_figure1b_and_suppl_fig3.py` | Draws Figure 1B and Supplementary Fig. S3 from the three tables above. |
+| `plot_figure1a_schematic.py` | Figure 1 panel A: a synthetic schematic of the segmentation pipeline. Nothing in it is measured; the caption says so. |
+| `compose_figure1.py` | Stacks panel A above panel B into the final Figure 1, by translation only (no scaling, no rasterising). |
+
+```bash
+python3 scripts/Figures/locus_windows.py --annotation-dir Data/Annotation --outdir Data/LocusTracks
+python3 scripts/Figures/locus_coverage_real.py --indir Data/LocusTracks \
+    --combined-dir Data/CombinedProfiles --outdir Data/LocusTracks
+Rscript scripts/Figures/locus_segmentation.R --indir Data/LocusTracks --outdir Data/LocusTracks
+python3 scripts/Figures/plot_figure1b_and_suppl_fig3.py --indir Data/LocusTracks --outdir Figures_out
+python3 scripts/Figures/plot_figure1a_schematic.py --outdir Figures_out
+python3 scripts/Figures/compose_figure1.py --panel-a Figures_out/figure1a.pdf \
+    --panel-b Figures_out/figure1b.pdf --out Figures_out/figure1.pdf
+```
+
+**Supplementary Fig. S9** — metagene coverage split by whether this study moved the boundary: the same our_ref genes and profiles as Figure 4, split on whether the final annotation extended that boundary by more than 20 nt.
+
+| Script | Description |
+|---|---|
+| `compute_metagene_scaled.py` | Per-gene-scaled metagene profiles from the our_ref BAM, split into extended/unchanged groups, with structural zeros kept as NaN rather than padded (a mean of per-gene ratios is otherwise dominated by the smallest denominators). |
+| `plot_suppl_fig9.py` | Draws Supplementary Fig. S9 from the profiles above. |
+
+```bash
+python3 scripts/Figures/compute_metagene_scaled.py --bam DRS_our_ref.bam --data-type DRS \
+    --final-utr Data/Annotation/final_utr.tsv --nagalakshmi-utr Data/Annotation/Nagalakshmi_UTR.csv \
+    --restrict-genes Data/Metrics/profiles/shared_genes.txt --outdir Data/Metrics/profiles_scaled
+# repeat with --bam SR_merged_our_ref.bam --data-type SR --append
+python3 scripts/Figures/plot_suppl_fig9.py --profiles Data/Metrics/profiles_scaled/metagene_scaled_profiles.tsv --outdir Figures_out
+```
+
+Supplementary Fig. S4 (loci where the pre-merge DRS call is shorter than the prior reference) has no plotting script in this repository yet.
 
 ---
 
@@ -235,6 +290,37 @@ Rscript scripts/Comparisons/plot_final_vs_tifseq_comparison.R \
     --outdir    Figures_out \
     --threshold 20
 ```
+
+**TIF-seq, both directions explicit** — Reviewer 2 asked for the TIF-seq validation reported with explicit over-extension *and* under-extension rates, not one tail folded into "otherwise concordant or longer."
+
+| Script | Description |
+|---|---|
+| `tifseq_rates.py` | Over-/under-extension at three tolerances for three annotations (final, Nagalakshmi, DRS-only); the tolerance is derived from the benchmark's own dispersion rather than asserted; a provenance breakdown and the envelope test (whether a boundary falls inside the range of ends TIF-seq actually observed). |
+| `plot_suppl_fig6.R` | **Supplementary Fig. S6.** Both tails at 20 nt for three annotations, both rates as a function of tolerance, the benchmark's own dispersion, and the envelope test. |
+
+```bash
+python3 scripts/Comparisons/tifseq_rates.py --annotation-dir Data/Annotation \
+    --pelechano-raw GSE39128_tsedall.txt.gz --outdir Data/TIFseq
+Rscript scripts/Comparisons/plot_suppl_fig6.R --indir Data/TIFseq --outdir Figures_out
+```
+
+**Is the DRS-shorter shortfall real, or a coverage artefact?** For genes where the DRS call is shorter than the prior reference, TIF-seq arbitrates directly, and a mechanistic prediction follows from DRS being read 3′ to 5′: a processivity artefact must grow with transcript length and shrink with depth at the 5′ end, and do neither at the 3′ end.
+
+| Script | Description |
+|---|---|
+| `shortfall.py` | Where DRS calls shorter, which call TIF-seq agrees with (two-way and three-way), logistic models of the shortfall against CDS length and depth, and what the merge rule's cost looks like against TIF-seq. |
+| `read_geometry.py` | The same prediction tested directly on the alignments, no annotation quantity involved: how far each read's aligned start/end sits from the annotated boundary, and whether the fraction of reads reaching an end decays with transcript length. |
+| `plot_suppl_fig7.R` | **Supplementary Fig. S7.** Three-way TIF-seq arbitration, the reversed-direction control, the odds-ratio mechanism from the annotation, and the same contrast read directly off the alignments. |
+
+```bash
+python3 scripts/Comparisons/shortfall.py --annotation-dir Data/Annotation \
+    --softclip-dir Data/Metrics/softclip --outdir Data/Shortfall
+python3 scripts/Comparisons/read_geometry.py --bam DRS_our_ref_validation.bam \
+    --shortfall-genes Data/Shortfall/shortfall_genes.tsv --outdir Data/Shortfall
+Rscript scripts/Comparisons/plot_suppl_fig7.R --indir Data/Shortfall --outdir Figures_out
+```
+
+`read_geometry.py` needs the validation library's own BAM (independent of the six construction libraries, so agreement with a discarded DRS call is replication, not circularity) — not the our_ref BAM used elsewhere in this repository for the pooled construction data. Running it against the wrong BAM will still produce output but the headline percentages will not match the manuscript.
 
 **UNAGI (Al Kadi *et al.*, 2020)** — an independent nanopore full-length cDNA annotation: different library chemistry, basecaller, assembler and laboratory.
 
@@ -292,10 +378,12 @@ Scripts in `scripts/Sensitivity/` answer why the four segmentation thresholds (c
 | `segmentation_corrected.R` | The boundary-calling algorithm (`select_segments`, `detect_expressed_region_corrected`, `compute_utrs`) factored out of `ReferenceConstruction/02_transcripts_segmentation.R` so it can be re-run with non-released threshold values. Sourced by `sensitivity_sweep.R`, not reimplemented elsewhere. |
 | `sensitivity_sweep.R` | Runs the 625-combination grid on each of the six conditions, reusing one Segmentor3IsBack change-point pass per gene per condition across the whole grid. The expensive step (~1 hour for all six conditions). |
 | `sensitivity_analyse.py` | Compares every combination's six-condition-max call against the released combination: a whole-grid summary (how far the worst-case joint move across all four thresholds can shift the calls) and a per-parameter one-step breakdown (which threshold drives the movement, and how much of the gene population). |
+| `sensitivity_curves.py` | **Supplementary Fig. S1.** One line per threshold, the boundary-change rate across all five grid points as that threshold moves with the other three held at the released value — the shape of the response, not just the first step. |
 
 ```bash
 Rscript scripts/Sensitivity/sensitivity_sweep.R
 python3 scripts/Sensitivity/sensitivity_analyse.py
+python3 scripts/Sensitivity/sensitivity_curves.py
 ```
 
 `sensitivity_sweep.R` reads the six `{condition}_combined.tsv` files `ReferenceConstruction/01_aggregate_data.R` produces.

@@ -1,0 +1,7 @@
+end	envelope	n	inside_n	inside_pct	n_over_extended	over_inside_n	over_inside_pct
+5prime	most extreme observed	5407	5045	93.3	2914	2570	88.19
+5prime	99th percentile of reads	5407	4204	77.75	2914	1744	59.85
+5prime	95th percentile of reads	5407	3422	63.29	2914	1068	36.65
+3prime	most extreme observed	5462	5314	97.29	2620	2531	96.6
+3prime	99th percentile of reads	5462	4439	81.27	2620	1673	63.85
+3prime	95th percentile of reads	5462	3622	66.31	2620	1018	38.85

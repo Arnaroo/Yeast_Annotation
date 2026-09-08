@@ -1,0 +1,5 @@
+end	n	subset	median_drs_nt	median_prior_nt	median_tifseq_nt	mae_drs_nt	mae_prior_nt	drs_closer_n	drs_closer_pct	prior_closer_n	prior_closer_pct	tied_n	sign_test_p	tifseq_below_both_n	tifseq_below_both_pct	tifseq_between_n	tifseq_between_pct	tifseq_above_both_n	tifseq_above_both_pct
+5prime	3052	drs_shorter	54.0	107.0	48.0	12.0	29.0	2056	67.37	979	32.08	17	8.810222381079492e-87	1301.0	42.63	1050.0	34.4	701.0	22.97
+3prime	3534	drs_shorter	105.0	195.0	120.0	9.0	51.0	2439	69.02	1084	30.67	11	3.821593857744072e-118	1631.0	46.15	1169.0	33.08	734.0	20.77
+5prime	1376	drs_longer_control				38.0	9.0	252	18.31	1113	80.89	11							
+3prime	934	drs_longer_control				5.0	1.0	314	33.62	546	58.46	74							

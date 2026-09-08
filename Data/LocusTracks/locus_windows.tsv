@@ -1,0 +1,10 @@
+panel	gene	chrom	strand	orf_start	orf_end	window_start	window_end	window_len	n_features_drawn	coverage_source
+Fig1B	YBL091C	II	-	47363	48628	46363	49628	3266	40	real (NS_PS+NS_RDT+S10_PS+S10_RDT, summed per-condition combined tables)
+S1A	YFR008W	VI	+	160535	161200	159535	162200	2666	14	real (NS_PS+NS_RDT+S10_PS+S10_RDT, summed per-condition combined tables)
+S1B	YOR110W	XV	+	528941	530248	527941	531248	3308	22	real (NS_PS+NS_RDT+S10_PS+S10_RDT, summed per-condition combined tables)
+S1C	YBR084W	II	+	411054	413981	410054	414981	4928	22	real (NS_PS+NS_RDT+S10_PS+S10_RDT, summed per-condition combined tables)
+S1D	YCL045C	III	-	44623	46905	43623	47905	4283	26	real (NS_PS+NS_RDT+S10_PS+S10_RDT, summed per-condition combined tables)
+S1E	YCR015C	III	-	141217	142170	140217	143170	2954	13	real (NS_PS+NS_RDT+S10_PS+S10_RDT, summed per-condition combined tables)
+S1F	YDL167C	IV	-	160995	163154	159995	164154	4160	22	real (NS_PS+NS_RDT+S10_PS+S10_RDT, summed per-condition combined tables)
+S1G	YDR376W	IV	+	1226822	1228303	1225822	1229303	3482	24	real (NS_PS+NS_RDT+S10_PS+S10_RDT, summed per-condition combined tables)
+S1H	YGL103W	VII	+	310967	311927	309967	312927	2961	30	real (NS_PS+NS_RDT+S10_PS+S10_RDT, summed per-condition combined tables)

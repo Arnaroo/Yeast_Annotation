@@ -1,0 +1,11 @@
+end	provenance	n	median_diff	frac_positive	under_pct_T20	over_pct_T20	under_pct_T50	over_pct_T50	under_pct_T100	over_pct_T100
+5prime	DRS only, no prior call	685	0.0	0.4876	25.99	37.08	16.35	29.64	13.28	22.77
+5prime	both sources agree	41	-1.0	0.2683	0.0	7.32	0.0	4.88	0.0	4.88
+5prime	extended by DRS over prior	1376	34.0	0.859	2.4	60.54	1.82	43.68	1.31	32.92
+5prime	prior only, no DRS call	421	10.0	0.5724	7.84	45.13	5.23	34.2	3.09	26.37
+5prime	prior retained, DRS shorter	2925	27.0	0.7768	1.4	56.75	0.92	37.06	0.68	24.99
+3prime	DRS only, no prior call	689	-1.0	0.4775	31.2	22.06	23.22	14.51	15.38	10.6
+3prime	both sources agree	53	-1.0	0.434	1.89	11.32	0.0	5.66	0.0	5.66
+3prime	extended by DRS over prior	934	3.0	0.7955	5.57	14.24	2.46	8.14	0.86	6.42
+3prime	prior only, no DRS call	301	-1.0	0.4352	18.94	32.23	15.61	26.25	11.96	20.27
+3prime	prior retained, DRS shorter	3529	49.0	0.7931	2.04	63.81	0.85	49.96	0.68	32.3

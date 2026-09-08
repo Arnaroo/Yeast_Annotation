@@ -1,0 +1,9 @@
+end	support_bin	n	median_diff	under_pct_T20	over_pct_T20
+5prime	1	292	-1.0	23.97	39.38
+5prime	2 to 4	652	6.0	15.49	39.26
+5prime	5 to 19	1229	20.0	5.21	50.37
+5prime	20+	3234	31.0	1.3	59.49
+3prime	1	299	-1.0	26.42	21.4
+3prime	2 to 4	662	2.0	17.82	28.55
+3prime	5 to 19	1243	8.0	7.24	41.03
+3prime	20+	3258	36.0	2.95	57.0

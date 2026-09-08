@@ -50,6 +50,8 @@
 
 FLANK <- 1000
 CAP <- 50
+REL_MERGE_WINDOW <- 40   # released value of the merge_window threshold
+REL_EFFECT_FRAC <- 0.10  # released value of the effect_frac threshold
 SPECIAL_THRESH <- c(YAL003W = 250, YDR500C = 250)
 FORCE_UNEXPRESSED <- c("YCL058C", "YBL094C")
 

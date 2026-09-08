@@ -1,0 +1,5 @@
+model	term	n	or_per_decade	ci_lo	ci_hi	p
+reach_5'	log10_tx_len	5737	0.0914	0.0882	0.0948	0.0
+reach_5'	log10_depth	5737	0.5909	0.585	0.5967	0.0
+reach_3'	log10_tx_len	5737	4.7304	4.6787	4.7826	0.0
+reach_3'	log10_depth	5737	1.1507	1.1469	1.1546	0.0
