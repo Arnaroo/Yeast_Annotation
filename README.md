@@ -1,8 +1,10 @@
-# An updated UTR annotation for *Saccharomyces cerevisiae* from Direct RNA Sequencing
+# A refined *Saccharomyces cerevisiae* reference transcriptome from Direct RNA Sequencing
 
 This repository contains the data, code, and pre-built reference files associated with:
 
-> **Rossini _et al._** (2026). An updated UTR annotation for *Saccharomyces cerevisiae* derived from Oxford Nanopore Direct RNA Sequencing.
+> **Rossini O, Cleynen A, Shirokikh N.** A refined *Saccharomyces cerevisiae* reference transcriptome from Direct RNA Sequencing, with a reusable pipeline for UTR annotation updates. *FEMS Yeast Research*, in revision (manuscript FEMSYR-26-06-0101).
+
+The annotation, the transcript FASTA and GFF3, and the merged UTR table are also archived on Zenodo under DOI [10.5281/zenodo.20828039](https://doi.org/10.5281/zenodo.20828039).
 
 The resource provides per-gene 5′ and 3′ UTR lengths for *S. cerevisiae* derived from Oxford Nanopore Direct RNA Sequencing (DRS), merged with the widely used Nagalakshmi *et al.* (2008) short-read RNA-seq annotation. The merge rule guarantees that **no Nagalakshmi boundary is ever shortened**: at each boundary and for each gene, the longer of the two estimates is retained. Genes detected only in DRS receive DRS-only values; genes absent from DRS retain their Nagalakshmi boundaries.
 
@@ -114,7 +116,7 @@ Pre-computed alignment quality metrics for all five references × two data types
 - `antisense/` — antisense alignment rates
 - `aln_per_read/` — alignments-per-read distributions
 - `softclip/` — soft-clip statistics (DRS only)
-- `profiles/` — metagene coverage profiles around the ORF start (TSS) and end (TES)
+- `profiles/` — metagene coverage profiles around the ORF start and end (files keep their internal `_TSS`/`_TES` naming; see the note under `compute_metagene.py`)
 
 ---
 
@@ -187,10 +189,12 @@ These scripts are written for PBS/Torque HPC systems (tested on NCI Gadi). All p
 | `03_align_ShortRead.sh` | Aligns short-read data to the genome with bwa-mem2 and to the four transcriptome references with STAR. Merges per-sample BAMs with `samtools merge`. |
 | `04_metagene_coverage.sh` | deepTools-based metagene pipeline (BAM → bigWig → `computeMatrix`). Retained for reproducibility; the pysam-based approach in `05_metrics.sh` Section 5 is used for the paper figures. |
 | `05_metrics.sh` | All post-alignment metrics in one job: (1) true SR mapping rate from FASTQ read counts; (2) flagstat, multimapping, antisense, and alignments-per-read for all BAMs; (3) MAPQ=0 multi-mapping proxy for bwa-mem2 genome BAMs; (4) soft-clip statistics for DRS BAMs; (5) pysam-based metagene profiles restricted to the shared gene set. |
-| `compute_metagene.py` | Called by `05_metrics.sh` Section 5. Computes mean ± SEM coverage profiles anchored at the true ORF start (TSS) and end (TES) for any transcriptome BAM. Accepts per-gene UTR lengths or fixed flanks, and can restrict all references to the same shared gene set for a fair comparison. |
+| `compute_metagene.py` | Called by `05_metrics.sh` Section 5. Computes mean ± SEM coverage profiles anchored at the ORF start and end for any transcriptome BAM. Accepts per-gene UTR lengths or fixed flanks, and can restrict all references to the same shared gene set for a fair comparison. |
 | `softclip_metrics.py` | Called by `05_metrics.sh` Section 4. Summarises soft-clip length distributions at the 5′ and 3′ ends of DRS alignments. |
 
 > **Note on multi-mapping:** bwa-mem2 never writes secondary alignment records (SAM flag `0x100`) regardless of alignment flags. Multi-mapping rates for genome BAMs are therefore computed as the fraction of primary reads with MAPQ = 0 (`05_metrics.sh` Section 3), not via secondary record counts.
+
+> **Note on TSS/TES:** internal code, comments and file names (`compute_metagene.py`, `04_metagene_coverage.sh`, `*_TSS.tsv` / `*_TES.tsv`) use TSS and TES as shorthand for the anchor points these profiles actually use: the annotated ORF start and ORF end, not the transcript start or end. The manuscript and figures say "ORF start"/"ORF end" throughout, per Reviewer 2's request to hold that distinction; the shorthand survives here only in code-level naming.
 
 ---
 
@@ -198,14 +202,18 @@ These scripts are written for PBS/Torque HPC systems (tested on NCI Gadi). All p
 
 Figure plotting scripts are in `scripts/Figures/`. They read the pre-computed metric files from `Data/Metrics/` and the annotation tables from `Data/Annotation/`, so they can be run locally without re-running the HPC pipeline.
 
+Supplementary figure numbers below are the manuscript's current numbering; the filenames still carry an earlier numbering from before a later reordering and were not renamed to match, so don't infer the figure number from the filename.
+
 | Script | Figure |
 |---|---|
 | `plot_figure2.py` | DRS UTR length distributions and comparison with Nagalakshmi *et al.* |
 | `plot_figure3.py` | Alignment quality metrics across five references × two data types. |
-| `plot_figure4.py` | Metagene coverage profiles at TSS and TES for all references. |
-| `plot_suppl_fig2.py` | Supplementary: four-panel DRS vs. Nagalakshmi UTR comparison. |
-| `plot_suppl_fig3.R` | Supplementary: per-condition UTR length distributions. |
-| `plot_suppl_fig4.py` | Supplementary: soft-clip length distributions. |
+| `plot_figure4.py` | Metagene coverage profiles anchored at the ORF start and end for all references (the axes and this table both say ORF start/end, not TSS/TES — see the note under `compute_metagene.py`). |
+| `plot_suppl_fig2.py` | **Supplementary Fig. S3.** Read pileups at eight loci chosen to be difficult (a close neighbour, an intron-containing gene), one BAM per locus with our / Nagalakshmi / pre-merge-DRS boundary tracks overlaid. |
+| `plot_suppl_fig3.R` | **Supplementary Fig. S5.** Four-panel genome-wide comparison of the pre-merge DRS calls against Nagalakshmi *et al.* |
+| `plot_suppl_fig4.py` | **Supplementary Fig. S8.** Read pileups for DRS and short-read BAMs together, one gene per panel group, validating boundaries against two independent datasets neither used in construction. |
+
+Figure 1 and Supplementary Figs. S1, S4, S6, S7 and S9 have no plotting script in this repository yet — they exist only in the authors' internal analysis directory. Get in touch with the corresponding authors if you need them.
 
 ---
 
@@ -352,7 +360,11 @@ To reproduce the annotation from raw DRS coverage profiles, run scripts 01–03 
 
 If you use this annotation or code, please cite:
 
-> Rossini *et al.* (2026). An updated UTR annotation for *Saccharomyces cerevisiae* derived from Oxford Nanopore Direct RNA Sequencing. 
+> Rossini O, Cleynen A, Shirokikh N. A refined *Saccharomyces cerevisiae* reference transcriptome from Direct RNA Sequencing, with a reusable pipeline for UTR annotation updates. *FEMS Yeast Research*, in revision.
+
+and, for the data and code archive itself:
+
+> Rossini O, Cleynen A, Shirokikh N. (2026). A refined *Saccharomyces cerevisiae* reference transcriptome from Direct RNA Sequencing [data set]. Zenodo. https://doi.org/10.5281/zenodo.20828039
 
 The Nagalakshmi *et al.* reference used in the merge:
 
